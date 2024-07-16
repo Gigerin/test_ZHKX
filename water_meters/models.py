@@ -8,6 +8,7 @@ class Tariff(models.Model):
 class WaterMeter(models.Model):
     name = models.CharField(max_length=255)
     tariff = models.ForeignKey(Tariff, on_delete=models.CASCADE)
+    reading = models.DecimalField(max_digits=100, decimal_places=2)
 
 
 class MonthlyWaterUsage(models.Model):

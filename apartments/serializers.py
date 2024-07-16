@@ -5,4 +5,4 @@ from .models import Apartment
 class ApartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Apartment
-        fields = ['id', 'number', 'building']
+        fields = ['number', 'building', 'area_sq_m']

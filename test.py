@@ -11,10 +11,19 @@ def get_token(email, password):
     response.raise_for_status()
     return response.json()["access"]
 
+def get_apartments_in_building(token, building_number):
+    url = f"{API_BASE_URL}/building/{building_number}/apartments"
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.json()
+
 def main():
     try:
         token = get_token(EMAIL, PASSWORD)
-        print(token)
+
+        apartments = get_apartments_in_building(token, 1)
+        print(apartments)
 
 
     except requests.exceptions.RequestException as e:
