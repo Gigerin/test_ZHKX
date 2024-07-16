@@ -1,13 +1,21 @@
 from django.db import models
 from django.utils import timezone
 
-class Tariff(models.Model):
+
+
+class WaterTariff(models.Model):
     name = models.CharField(max_length=255)
     price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
 
-class WaterMeter(models.Model):
+
+class MaintenanceTariff(models.Model):
     name = models.CharField(max_length=255)
-    tariff = models.ForeignKey(Tariff, on_delete=models.CASCADE)
+    price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class WaterMeter(models.Model):
+    apartment = models.ForeignKey('apartments.Apartment', on_delete=models.CASCADE, related_name='+')
+    name = models.CharField(max_length=255)
     reading = models.DecimalField(max_digits=100, decimal_places=2)
 
 
