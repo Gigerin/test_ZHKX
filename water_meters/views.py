@@ -1,3 +1,6 @@
+import datetime
+from decimal import Decimal
+
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -6,6 +9,7 @@ from rest_framework.response import Response
 
 from water_meters.models import WaterMeter, WaterMeterReading
 from water_meters.serializers import WaterMeterReadingSerializer
+from water_meters.utils import convert_string_date_to_datetime
 
 
 # Create your views here.
@@ -30,7 +34,15 @@ def submit_reading(request, water_meter_id):
     data["water_meter"] = water_meter_id
     water_meter_reading_serializer = WaterMeterReadingSerializer(data=data)
     if water_meter_reading_serializer.is_valid():
-        water_meter_reading_serializer.save()
+        try:
+
+            date = convert_string_date_to_datetime(data["date"])
+            print(date)
+            reading = WaterMeterReading.objects.get(pk=water_meter_id, date=date)
+            reading.water_meter = Decimal(data["reading"])
+            return Response(water_meter_reading_serializer.data, status=status.HTTP_200_OK)
+        except WaterMeterReading.DoesNotExist:
+            water_meter_reading_serializer.save()
     else:
         return Response(water_meter_reading_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(water_meter_reading_serializer.data, status=status.HTTP_200_OK)
