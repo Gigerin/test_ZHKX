@@ -11,4 +11,3 @@ class WaterMeterReadingSerializer(serializers.ModelSerializer):
         model = WaterMeterReading
         fields = ['id', 'water_meter', 'reading', 'date']
 
-    
