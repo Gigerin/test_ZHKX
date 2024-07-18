@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import WaterTariff, MaintenanceTariff, WaterMeter, MonthlyWaterUsage
+from .models import WaterTariff, MaintenanceTariff, WaterMeter, WaterMeterReading
+
 
 @admin.register(WaterTariff)
 class WaterTariffAdmin(admin.ModelAdmin):
@@ -15,12 +16,12 @@ class MaintenanceTariffAdmin(admin.ModelAdmin):
 
 @admin.register(WaterMeter)
 class WaterMeterAdmin(admin.ModelAdmin):
-    list_display = ('apartment', 'name', 'reading')
-    search_fields = ('name', 'apartment__name')  # Assuming apartment has a name field
+    list_display = ('apartment', 'name')
+    search_fields = ('name', 'apartment__number')
 
 
-@admin.register(MonthlyWaterUsage)
-class MonthlyWaterUsageAdmin(admin.ModelAdmin):
-    list_display = ('apartment', 'water_meter', 'date', 'water_used')
+@admin.register(WaterMeterReading)
+class WaterMeterReadingAdmin(admin.ModelAdmin):
+    list_display = ('water_meter', 'reading', 'date')
+    search_fields = ('water_meter__name', 'water_meter__apartment__number')
     list_filter = ('date',)
-    search_fields = ('apartment__name', 'water_meter__name')  # Assuming apartment and water meter have name fields
