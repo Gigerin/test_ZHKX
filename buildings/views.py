@@ -2,11 +2,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Building
+from .models import Building, CalculationProgress
 from apartments.models import Apartment
 from apartments.serializers import ApartmentSerializer
 from .serializers import BuildingSerializer, BuildingAddressSerializer
-from apartments.tasks import calculate_monthly_rent
+from apartments.tasks import calculate_rent_for_apartment
 
 
 @api_view(['GET'])
@@ -31,10 +31,25 @@ def calculate_rent_building(request, building_id, month, year):
             status=status.HTTP_400_BAD_REQUEST,
         )
     building = get_object_or_404(Building, id=building_id)
-    apartments = Apartment.objects.filter(building=building)
-    result = []
-    for apartment in apartments:
-        apartment_serializer = ApartmentSerializer(apartment)
-        calculate_monthly_rent.delay(apartment_serializer.data, month, year)
-    return Response({'result': result})
+    apartments = building.apartments.all()
 
+    progress = CalculationProgress.objects.create(
+        building=building,
+        total_apartments=apartments.count(),
+        completed_apartments=0,
+        status='in_progress'
+    )
+
+    for apartment in apartments:
+        calculate_rent_for_apartment.delay(apartment.id, progress.id, month, year)
+
+    return Response({'message': 'Calculation started', 'progress_id': progress.id})
+
+def check_calculation_progress(request, progress_id):
+    progress = get_object_or_404(CalculationProgress, id=progress_id)
+    return Response({
+        'building_id': progress.building.id,
+        'total_apartments': progress.total_apartments,
+        'completed_apartments': progress.completed_apartments,
+        'status': progress.status
+    })

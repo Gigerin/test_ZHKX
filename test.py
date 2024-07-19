@@ -1,10 +1,9 @@
 import requests
 import datetime
-import random
 
 API_BASE_URL = "http://127.0.0.1:8000/api"
 EMAIL = "test@example.com"
-PASSWORD = ("ghbdtn123")
+PASSWORD = "ghbdtn123"
 
 
 def random_date_2025():
@@ -24,56 +23,60 @@ def generate_ten_readings():
         date_list.append((date, i + 20))
     return date_list
 
+
 def get_token(email, password):
     url = f"{API_BASE_URL}/token/"
     response = requests.post(url, data={"email": email, "password": password})
     response.raise_for_status()
     return response.json()["access"]
 
+
 def get_apartments_in_building(token, building_number):
-    url = f"{API_BASE_URL}/building/{building_number}/apartments"
+    url = f"{API_BASE_URL}/buildings/{building_number}/apartments/"
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.json()
 
-def get_building_address(token, building_number):
-    url = f"{API_BASE_URL}/building/{building_number}/address"
+
+def get_water_meters_in_apartment(token, apartment_id):
+    url = f"{API_BASE_URL}/apartments/{apartment_id}/water_meters/"
     headers = {"Authorization": f"Bearer {token}"}
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.json()
 
-def get_building_rent(token, year, month, building_number):
-    url = f"{API_BASE_URL}/building/{building_number}/calculate_rent/{year}/{month}"
-    headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    return response.json()
 
 def submit_reading(token, water_meter, reading, date):
-    url = f"{API_BASE_URL}/water_meter/{water_meter}/submit_reading"
+    url = f"{API_BASE_URL}/water_meters/{water_meter}/submit_reading/"
     headers = {"Authorization": f"Bearer {token}"}
     data = {"reading": reading, "date": date}
     response = requests.put(url, json=data, headers=headers)
     response.raise_for_status()
     return response.json()
-    pass
+
 
 def main():
     try:
         token = get_token(EMAIL, PASSWORD)
 
+        # Get all apartments in building 1
         apartments = get_apartments_in_building(token, 1)
-        print(apartments)
-        building_address = get_building_address(token, 1)
-        print(building_address)
+
         readings = generate_ten_readings()
-        for reading in readings:
-            result = submit_reading(token, 1, reading[1], str(reading[0]))
-            print(result)
-        rent = get_building_rent(token, 2025, 9, 1)
-        print(rent)
+
+        for apartment in apartments:
+            apartment_id = apartment['pk']
+            print(apartment)
+            water_meters = get_water_meters_in_apartment(token, apartment_id)
+            for water_meter in water_meters['water_meters']:
+                water_meter_id = water_meter['pk']
+                for reading in readings:
+                    result = submit_reading(token, water_meter_id, reading[1], str(reading[0]))
+                    print(result)
+
+        print("All readings have been submitted successfully.")
+
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
 
