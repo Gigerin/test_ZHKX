@@ -14,10 +14,8 @@ def random_date_2025():
 def generate_ten_readings():
     start_date = random_date_2025()
 
-    # List to hold the dates and assigned numbers
     date_list = []
 
-    # Generate 10 dates, each one month apart, with an increasing number assigned
     for i in range(10):
         date = start_date + datetime.timedelta(days=30 * i)
         date_list.append((date, i + 20))
@@ -60,7 +58,6 @@ def main():
     try:
         token = get_token(EMAIL, PASSWORD)
 
-        # Get all apartments in building 1
         apartments = get_apartments_in_building(token, 1)
 
         readings = generate_ten_readings()

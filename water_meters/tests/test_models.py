@@ -35,7 +35,6 @@ def test_create_monthly_water_usage(water_meter):
     assert usage.date == date
     assert usage.water_used == Decimal("10.75")
 
-# Fixtures to create related instances
 
 @pytest.fixture
 def building(db):
