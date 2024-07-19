@@ -3,8 +3,8 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    #path("api/users/", include("users.urls")),
+    path("admin/", admin.site.urls),
+    # path("api/users/", include("users.urls")),
     path("api/apartments/", include("apartments.urls")),
     path("api/buildings/", include("buildings.urls")),
     path("api/water_meters/", include("water_meters.urls")),

@@ -63,13 +63,15 @@ def main():
         readings = generate_ten_readings()
 
         for apartment in apartments:
-            apartment_id = apartment['pk']
+            apartment_id = apartment["pk"]
             print(apartment)
             water_meters = get_water_meters_in_apartment(token, apartment_id)
-            for water_meter in water_meters['water_meters']:
-                water_meter_id = water_meter['pk']
+            for water_meter in water_meters["water_meters"]:
+                water_meter_id = water_meter["pk"]
                 for reading in readings:
-                    result = submit_reading(token, water_meter_id, reading[1], str(reading[0]))
+                    result = submit_reading(
+                        token, water_meter_id, reading[1], str(reading[0])
+                    )
                     print(result)
 
         print("All readings have been submitted successfully.")

@@ -14,6 +14,7 @@ from water_meters.utils import convert_string_date_to_datetime
 
 # Create your views here.
 
+
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 def submit_reading(request, water_meter_id):
@@ -40,9 +41,13 @@ def submit_reading(request, water_meter_id):
             print(date)
             reading = WaterMeterReading.objects.get(pk=water_meter_id, date=date)
             reading.water_meter = Decimal(data["reading"])
-            return Response(water_meter_reading_serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                water_meter_reading_serializer.data, status=status.HTTP_200_OK
+            )
         except WaterMeterReading.DoesNotExist:
             water_meter_reading_serializer.save()
     else:
-        return Response(water_meter_reading_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            water_meter_reading_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
     return Response(water_meter_reading_serializer.data, status=status.HTTP_200_OK)

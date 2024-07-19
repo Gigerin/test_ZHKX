@@ -11,6 +11,5 @@ class Apartment(models.Model):
     water_tariff = models.ForeignKey(WaterTariff, on_delete=models.CASCADE)
     maintenance_tariff = models.ForeignKey(MaintenanceTariff, on_delete=models.CASCADE)
 
-
     def __str__(self):
         return self.number
