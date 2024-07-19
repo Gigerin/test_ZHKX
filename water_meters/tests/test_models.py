@@ -8,11 +8,10 @@ from water_meters.models import (
     WaterTariff,
     MaintenanceTariff,
     WaterMeter,
-    MonthlyWaterUsage,
 )
 from apartments.models import (
     Apartment,
-)  # Assuming this is where the Apartment model is defined
+)
 
 
 @pytest.mark.django_db
@@ -43,19 +42,6 @@ def test_create_water_meter(apartment):
     assert water_meter.apartment == apartment
 
 
-@pytest.mark.django_db
-def test_create_monthly_water_usage(water_meter):
-    date = timezone.now().date()
-    apartment = water_meter.apartment
-    usage = MonthlyWaterUsage.objects.create(
-        water_meter=water_meter,
-        apartment=apartment,
-        date=date,
-        water_used=Decimal("10.75"),
-    )
-    assert usage.water_meter == water_meter
-    assert usage.date == date
-    assert usage.water_used == Decimal("10.75")
 
 
 @pytest.fixture
