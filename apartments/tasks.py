@@ -21,6 +21,14 @@ logger = get_task_logger(__name__)
 
 @shared_task
 def calculate_rent_for_apartment(apartment_id, progress_id, month, year):
+    """
+    Асинхронная функция для вычисления стоимости всей квартиру
+    :param apartment_id: ID квартиры
+    :param progress_id: ID прогресса
+    :param month: Месяц
+    :param year: Год
+    :return: Ничего, сохраняет результаты вычислений в БД
+    """
     apartment = Apartment.objects.get(pk=apartment_id)
     try:
         water_meter = WaterMeter.objects.get(
@@ -63,4 +71,3 @@ def calculate_rent_for_apartment(apartment_id, progress_id, month, year):
     with transaction.atomic():
         progress = CalculationProgress.objects.get(id=progress_id)
         progress.update_progress(total_rent)
-    return total_rent

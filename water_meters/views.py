@@ -19,10 +19,9 @@ from water_meters.utils import convert_string_date_to_datetime
 @permission_classes([IsAuthenticated])
 def submit_reading(request, water_meter_id):
     """
-    Арендует велосипед по pk
-    :param request:
-    :param pk: ID велосипеда
-    :return: данные об успешно арендованном велосипеде
+    Записывает показания счетчика
+    :param request, содержит в себе дату показания и само показание:
+    :param pk: ID счетчика
     """
     try:
         water_meter = WaterMeter.objects.get(pk=water_meter_id)
@@ -38,7 +37,6 @@ def submit_reading(request, water_meter_id):
         try:
 
             date = convert_string_date_to_datetime(data["date"])
-            print(date)
             reading = WaterMeterReading.objects.get(pk=water_meter_id, date=date)
             reading.water_meter = Decimal(data["reading"])
             return Response(

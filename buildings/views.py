@@ -55,6 +55,13 @@ def calculate_rent_building(request, building_id, month, year):
 def check_calculation_progress(
     request, building_id, progress_id
 ):
+    """
+    Проверяет прогресс текущего вычисления
+    :param request:
+    :param building_id: номер здания в котором проводиться вычисление
+    :param progress_id: ID вычисления
+    :return: либо прогресс видо обработанные квартиры/все квартиры, либо результат, либо ошибку
+    """
     progress = get_object_or_404(CalculationProgress, id=progress_id)
     return Response(
         {
