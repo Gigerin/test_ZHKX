@@ -50,7 +50,11 @@ def main():
             progress = check_calculation_progress(token,1, progress_id)
             print(f"Progress: {progress['completed_apartments']}/{progress['total_apartments']} - Status: {progress['status']}")
             if progress['status'] == 'completed':
-                print(f"Total rent for {month}/{year}: {progress['total_rent']}")                break
+                print(f"Total rent for {month}/{year}: {progress['total_rent']}")
+                break
+            if progress['status'] == 'error':
+                print(f"Error: {progress['error']}")
+                break
             time.sleep(1)
 
     except requests.exceptions.RequestException as e:

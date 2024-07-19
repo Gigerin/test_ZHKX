@@ -26,6 +26,9 @@ def calculate_rent_for_apartment(apartment_id, progress_id, month, year):
             apartment=apartment,
         )
     except WaterMeter.DoesNotExist:
+        progress = CalculationProgress.objects.get(id=progress_id)
+        progress.status = 'error'
+        progress.save()
         return {"error": "Apartment without watermeter."}
     previous_date = return_previous_date(month, year)
     try:
@@ -33,6 +36,9 @@ def calculate_rent_for_apartment(apartment_id, progress_id, month, year):
         logger.info(water_meter_reading1)
         water_meter_reading2 = WaterMeterReading.objects.filter(water_meter=water_meter, date__year=year, date__month=month).latest('date')
     except WaterMeterReading.DoesNotExist:
+        progress = CalculationProgress.objects.get(id=progress_id)
+        progress.status = 'error'
+        progress.save()
         return {"error": "No readings found."}
 
     water_spent = water_meter_reading2.reading - water_meter_reading1.reading
